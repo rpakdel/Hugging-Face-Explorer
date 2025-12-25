@@ -23,11 +23,17 @@ export function useCreateOperation() {
       });
       
       if (!res.ok) {
-        if (res.status === 400) {
-          const error = await res.json();
+        const contentType = res.headers.get('content-type');
+        let error;
+        
+        if (contentType?.includes('application/json')) {
+          error = await res.json();
           throw new Error(error.message || "Invalid request");
+        } else {
+          const text = await res.text();
+          console.error('Server response:', text);
+          throw new Error(`Server error (${res.status}): ${text.substring(0, 100)}`);
         }
-        throw new Error("Failed to save operation");
       }
       
       return api.operations.create.responses[201].parse(await res.json());

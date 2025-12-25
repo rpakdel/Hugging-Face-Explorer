@@ -38,8 +38,16 @@ To run from the command line:
 
 ## API Overview
 
-- `GET /api/operations` returns stored operations (newest first).
-- `POST /api/operations` creates a new operation using the shared Zod schema from `shared/routes.ts`; invalid payloads return a `400` with the validation message.
+- `GET /api/operations` returns **stored operations from the database** (newest first).
+- `POST /api/operations` creates a new operation using the shared Zod schema from `shared/routes.ts`, then **persists it to the database**; invalid payloads return a `400` with the validation message.
+
+## Database Storage
+
+All operations are persisted in PostgreSQL via Drizzle ORM:
+- **Table**: `operations` (defined in `shared/schema.ts`)
+- **Fields**: `id`, `task`, `input`, `output`, `createdAt`
+- **Storage Layer**: `server/storage.ts` provides the `DatabaseStorage` class that handles all read/write operations
+- The database is automatically initialized and migrated when the dev container starts
 
 ## Testing & Safety
 

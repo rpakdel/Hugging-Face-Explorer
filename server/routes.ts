@@ -46,10 +46,14 @@ export async function registerRoutes(
 
   app.post(api.operations.create.path, async (req, res) => {
     try {
+      console.log("POST /api/operations - Body:", req.body);
       const input = api.operations.create.input.parse(req.body);
+      console.log("Parsed input:", input);
       const op = await storage.createOperation(input);
+      console.log("Operation created:", op);
       res.status(201).json(op);
     } catch (err) {
+      console.error("Error in POST /api/operations:", err);
       if (err instanceof z.ZodError) {
         return res.status(400).json({ message: err.errors[0].message });
       }

@@ -17,7 +17,8 @@
 
 4. **Patterns & Integration Points**
    - API contracts in `shared/routes.ts` pair a `z.object` schema with `input` + `output`. Server handlers re-use those validators before touching storage, so mimicking those shape definitions is best when adding client-side forms.
-   - Storage uses `server/storage.ts` with Drizzle `db` returned from `server/db.ts`; new tables should be defined inside `shared/schema.ts`, then referenced via `db.table` helpers.
+   - **Database & Storage**: All operations are persisted in PostgreSQL. The `server/storage.ts` module implements `IStorage` and `DatabaseStorage` classes that handle fetching and creating operations. It uses Drizzle ORM's `db` instance from `server/db.ts` to query the `operations` table defined in `shared/schema.ts`. Each operation includes `id`, `task`, `input`, `output`, and `createdAt` fields.
+   - When adding new persisted data: define the table in `shared/schema.ts`, create corresponding storage methods in `server/storage.ts`, add API routes in `server/routes.ts`, and run `npm run db:push` to migrate the database.
    - React hooks under `client/hooks` (for operations, toast, mobile) rely on the query client from `client/lib/queryClient.ts` and share the same fetch endpoints as defined in the server.
    - The codebase uses absolute import aliases: `@/` points to `client/src/`, `@shared/` points to `shared/`; keep `tsconfig.json` paths in mind when adding imports.
 
