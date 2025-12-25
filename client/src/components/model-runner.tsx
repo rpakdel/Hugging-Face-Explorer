@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { pipeline } from "@xenova/transformers";
+import { pipeline } from "@huggingface/transformers";
 import { useCreateOperation } from "@/hooks/use-operations";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";

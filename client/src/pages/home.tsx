@@ -26,7 +26,7 @@ export default function Home() {
             
             <p className="text-xl text-slate-600 leading-relaxed">
               Run state-of-the-art machine learning models directly in your browser. 
-              No backend inference required. Powered by <code className="bg-slate-100 px-2 py-1 rounded text-primary font-mono text-base">@xenova/transformers</code>.
+              No backend inference required. Powered by <code className="bg-slate-100 px-2 py-1 rounded text-primary font-mono text-base">@huggingface/transformers</code>.
             </p>
 
             <div className="flex justify-center gap-8 pt-4 text-sm text-slate-500 font-medium">
