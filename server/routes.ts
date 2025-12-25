@@ -3,11 +3,35 @@ import type { Server } from "http";
 import { storage } from "./storage";
 import { api } from "@shared/routes";
 import { z } from "zod";
+import swaggerUi from "swagger-ui-express";
+import fs from "fs";
+import path from "path";
+import YAML from "yaml";
 
 export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
+  // Load and serve Swagger/OpenAPI documentation
+  const openapiPath = path.join(process.cwd(), "openapi.yml");
+  const openapiFile = fs.readFileSync(openapiPath, "utf8");
+  const openapiSpec = YAML.parse(openapiFile);
+
+  // Serve the OpenAPI spec as JSON
+  app.get("/api/openapi.json", (req, res) => {
+    res.json(openapiSpec);
+  });
+
+  app.use(
+    "/api-docs",
+    swaggerUi.serve,
+    swaggerUi.setup(openapiSpec, {
+      swaggerOptions: {
+        url: "/api/openapi.json",
+      },
+    }),
+  );
+
   // Security headers for SharedArrayBuffer (required for some transformers.js features)
   app.use((req, res, next) => {
     res.header("Cross-Origin-Opener-Policy", "same-origin");

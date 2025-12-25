@@ -1,0 +1,198 @@
+openapi: 3.0.0
+info:
+  title: Hugging Face Explorer API
+  description: API for managing and executing AI model operations
+  version: 1.0.0
+  contact:
+    name: API Support
+
+servers:
+  - url: http://localhost:5000
+    description: Development server
+  - url: https://api.example.com
+    description: Production server
+
+paths:
+  /api/operations:
+    get:
+      summary: List all operations
+      description: Retrieves all saved operations from the database, ordered by most recent first
+      operationId: listOperations
+      tags:
+        - Operations
+      responses:
+        '200':
+          description: Successful response with list of operations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Operation'
+              examples:
+                success:
+                  value:
+                    - id: 1
+                      task: sentiment-analysis
+                      input: "This product is amazing!"
+                      output:
+                        label: POSITIVE
+                        score: 0.9998
+                      createdAt: "2025-12-25T06:16:18.000Z"
+                    - id: 2
+                      task: summarization
+                      input: "Long text to summarize..."
+                      output:
+                        summary_text: "Summarized version..."
+                      createdAt: "2025-12-25T06:15:00.000Z"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      summary: Create a new operation
+      description: Creates and executes a new operation, storing the result in the database
+      operationId: createOperation
+      tags:
+        - Operations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InsertOperation'
+            examples:
+              sentimentAnalysis:
+                summary: Sentiment Analysis Example
+                value:
+                  task: sentiment-analysis
+                  input: "This is an amazing product!"
+                  output:
+                    label: POSITIVE
+                    score: 0.9998
+              summarization:
+                summary: Summarization Example
+                value:
+                  task: summarization
+                  input: "Long text content to summarize..."
+                  output:
+                    summary_text: "Summarized content..."
+      responses:
+        '201':
+          description: Operation created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Operation'
+              example:
+                id: 3
+                task: sentiment-analysis
+                input: "This is an amazing product!"
+                output:
+                  label: POSITIVE
+                  score: 0.9998
+                createdAt: "2025-12-25T06:20:45.000Z"
+        '400':
+          description: Validation error - invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                missingField:
+                  value:
+                    message: "Invalid input: task is required"
+                invalidType:
+                  value:
+                    message: "Invalid input: input must be a string"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    Operation:
+      type: object
+      description: A completed operation with its results
+      required:
+        - id
+        - task
+        - input
+        - output
+        - createdAt
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: Unique identifier for the operation
+          example: 1
+        task:
+          type: string
+          description: Type of operation or model task executed
+          example: sentiment-analysis
+          enum:
+            - sentiment-analysis
+            - summarization
+            - named-entity-recognition
+            - question-answering
+            - text-generation
+        input:
+          type: string
+          description: The input text that was processed
+          example: "This product is amazing!"
+        output:
+          type: object
+          description: The model's output or result (flexible structure depending on task)
+          example:
+            label: POSITIVE
+            score: 0.9998
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the operation was created
+          example: "2025-12-25T06:16:18.000Z"
+
+    InsertOperation:
+      type: object
+      description: Request body for creating a new operation
+      required:
+        - task
+        - input
+        - output
+      properties:
+        task:
+          type: string
+          description: Type of operation or model task to execute
+          example: sentiment-analysis
+        input:
+          type: string
+          description: The input text to process
+          minLength: 1
+          example: "This is an amazing product!"
+        output:
+          type: object
+          description: The model's output or result
+          example:
+            label: POSITIVE
+            score: 0.9998
+
+    Error:
+      type: object
+      description: Error response
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          description: Error message describing what went wrong
+          example: "Invalid input: task is required"
+
+tags:
+  - name: Operations
+    description: Endpoints for managing AI model operations
