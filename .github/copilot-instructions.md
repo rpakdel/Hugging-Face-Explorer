@@ -23,7 +23,7 @@
    - The codebase uses absolute import aliases: `@/` points to `client/src/`, `@shared/` points to `shared/`; keep `tsconfig.json` paths in mind when adding imports.
 
 5. **Client Architecture & Model Pipelines**
-   - The client uses **`@xenova/transformers`** (Transformers.js), a JavaScript/WebAssembly port of Hugging Face Transformers. All model inference runs 100% client-side in the browser—no backend API calls needed for predictions.
+   - The client uses **`@huggingface/transformers`** (Transformers.js), a JavaScript/WebAssembly port of Hugging Face Transformers. All model inference runs 100% client-side in the browser—no backend API calls needed for predictions.
    - **Core Component**: `client/src/components/model-runner.tsx` handles the UI and model execution. Key state includes: `task` (selected model task), `input` (user text), `output` (model results), `isProcessing` (loading state), `progress` (model download %), and `modelStatus` (status message).
    - **Pipeline Flow**: `const pipe = await pipeline(task, undefined, { progress_callback })` loads/caches a model for the task. First run downloads (~50-200MB), subsequent runs use browser cache. Then `result = await pipe(input)` or `await pipe(input, { params })` runs inference.
    - **Task Configuration** in TASK_OPTIONS array includes `sentiment-analysis`, `text-generation`, `summarization`, `translation_en_to_fr`, and can be extended with `token-classification` (NER), `question-answering`, `zero-shot-classification`, etc.
