@@ -28,7 +28,7 @@ describe("ModelRunner", () => {
   it("runs the pipeline and persists the result", async () => {
     const inferenceResult = [{ label: "POSITIVE", score: 0.95 }];
     const pipeMock = vi.fn().mockResolvedValue(inferenceResult);
-    mockedPipeline.mockResolvedValue(pipeMock);
+    (mockedPipeline as any).mockResolvedValue(pipeMock);
 
     render(<ModelRunner />);
 
