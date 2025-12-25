@@ -55,7 +55,7 @@ export function ModelRunner() {
       // In a real production app, we might move this to a Web Worker to avoid blocking UI
       // For this demo, we'll run it in main thread but be careful
       
-      const pipe = await pipeline(task, undefined, {
+      const pipe = await pipeline(task as any, undefined, {
         progress_callback: (x: any) => {
           if (x.status === "progress") {
             setProgress(Math.round(x.progress || 0));
@@ -68,7 +68,7 @@ export function ModelRunner() {
       // Different parameters based on task
       let result;
       if (task === "text-generation") {
-        result = await pipe(input, { max_new_tokens: 50 });
+        result = await pipe(input, { max_new_tokens: 50 } as any);
       } else {
         result = await pipe(input);
       }
